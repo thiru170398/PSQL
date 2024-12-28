@@ -1,0 +1,50 @@
+CREATE TABLE patients (
+    patient_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    dob DATE NOT NULL,
+    contact_info JSONB
+);
+
+
+INSERT INTO patients (name, dob, contact_info)
+VALUES
+    ('John Doe', '1985-03-25', '{"phone": "555-1234", "email": "johndoe@example.com", "address": "123 Main St, City, Country"}'),
+    ('Jane Smith', '1990-07-12', '{"phone": "555-5678", "email": "janesmith@example.com", "address": "456 Elm St, City, Country"}'),
+    ('Alice Brown', '1978-11-30', '{"phone": "555-9101", "email": "alicebrown@example.com", "address": "789 Oak St, City, Country"}');
+
+SELECT patient_id, name, dob, contact_info FROM patients;
+
+
+CREATE TABLE appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    patient_id INT REFERENCES patients(patient_id) ON DELETE CASCADE,
+    appointment_date TIMESTAMP NOT NULL,
+    notes TEXT
+);
+
+
+INSERT INTO appointments (patient_id, appointment_date, notes)
+VALUES
+    (1, '2024-12-28 10:00:00', 'Routine checkup'),
+    (2, '2024-12-29 14:30:00', 'Follow-up for lab results'),
+    (3, '2024-12-30 09:00:00', 'Consultation for allergies');
+
+
+SELECT appointment_id, patient_id, appointment_date, notes
+FROM appointments;
+
+
+SELECT p.patient_id, p.name, p.dob, p.contact_info, a.appointment_id, a.appointment_date, a.notes
+FROM patients p
+JOIN appointments a ON p.patient_id = a.patient_id
+WHERE a.appointment_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
+ORDER BY a.appointment_date;
+
+
+SELECT patient_id, name, dob, contact_info
+FROM patients
+WHERE contact_info->>'phone' = '555-1234';
+
+SELECT patient_id, name, dob, contact_info
+FROM patients
+WHERE contact_info->>'phone' = '555-1234';
