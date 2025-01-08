@@ -118,3 +118,4 @@ usagecount,
 pinning_backends
 FROM pg_buffercache
 WHERE relfilenode = pg_relation_filenode('pricing_pkey'::regclass);
+
